@@ -14,14 +14,17 @@ end
 
 if Client then
     local mapName
-
+    local maskedMapName
     local oldGetMapName = Shared.GetMapName
     function Shared.GetMapName()
-        return mapName or oldGetMapName()
+        mapName = mapName or oldGetMapName()
+        if not gMaskMapName then return mapName end
+
+        return maskedMapName or mapName
     end
 
     local function OnMessageMapName(message)
-        mapName = message.mapName
+        maskedMapName = message.mapName
     end
     Client.HookNetworkMessage("MapCycle_MapName", OnMessageMapName)
 end

@@ -24,20 +24,24 @@ function Server.GetNumMaps()
 end
 
 local mapName
+local maskedMapName
 local oldGetMapName = Shared.GetMapName
 function Server.GetMapName(index)
     if index then return Server.GetMapNameWithIndex(index) end
 
     if not mapName then
         mapName = oldGetMapName()
+        maskedMapName = mapName
 
         local temp = LoadConfigFile(tempFileName, {}, false)
         if temp[2] then
-            mapName = string.gsub(mapName, temp[2], temp[1])
+            maskedMapName = string.gsub(maskedMapName, temp[2], temp[1])
         end
     end
 
-    return mapName
+    if not gMaskMapName then return mapName end
+
+    return maskedMapName
 end
 Shared.GetMapName = Server.GetMapName
 
@@ -54,13 +58,10 @@ local oldStartWorld = Server.StartWorld
 function Server.StartWorld(mods, mapName)
     local settings = gameModeMap and gameModeMap[mapName]
     local temp = {}
-    Log "Server.StartWorld"
-    Log("%s", settings)
     if settings then
         if settings.replace then
             mapName = string.gsub(mapName, settings.prefix, settings.replace)
             temp = {settings.prefix, settings.replace }
-            Print(mapName)
         end
 
         local mapMods = settings.mods
