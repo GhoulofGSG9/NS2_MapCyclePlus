@@ -1,0 +1,4 @@
+modEntry = {
+    FileHooks = "lua/MapCyclePlus/Filehooks.lua",
+    Priority = 100,
+}
